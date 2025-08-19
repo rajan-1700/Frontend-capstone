@@ -1,0 +1,78 @@
+/* Hero section */
+.hero {
+  background: linear-gradient(135deg, #f5f5dc, #e6e2d3);
+  min-height: 100vh;
+  position: relative;
+  overflow: hidden;
+  padding: 80px 20px;
+  
+}
+
+
+.text-navy {
+  color: #001f3f;
+  text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.25); 
+}
+
+h2 {
+  text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+}
+
+p {
+  text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.15); 
+}
+
+
+.btn-navy {
+  background-color: #001f3f;
+  color: white;
+  border-radius: 8px;
+  padding: 15px 40px;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  transition: all 0.3s ease;
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%   { box-shadow: 0 0 0 0 rgba(0, 31, 63, 0.5); }
+  70%  { box-shadow: 0 0 0 20px rgba(0, 31, 63, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(0, 31, 63, 0); }
+}
+
+.btn-navy:hover {
+  background-color: #003366;
+  color: #f1f1f1;
+}
+
+.book {
+  position: absolute;
+  width: 120px;
+  height: auto;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+  animation: float 6s ease-in-out infinite;
+}
+
+.book-1 { top: 10%; left: 3%;  --angle: -12deg; }
+.book-2 { top: 10%; right: 3%; --angle: 10deg; }
+.book-3 { bottom: 12%; left: 8%; --angle: 7deg; }
+.book-4 { bottom: 15%; right: 6%; --angle: -8deg; }
+
+.book-5 { 
+  top: 14%; 
+  left: 22%;  
+  --angle: 15deg;
+}
+
+.book-6 { 
+  top: 10%; 
+  right: 20%; 
+  --angle: -12deg;
+}
+
+@keyframes float {
+  0%   { transform: translateY(0) rotate(var(--angle)); }
+  50%  { transform: translateY(-15px) rotate(var(--angle)); }
+  100% { transform: translateY(0) rotate(var(--angle)); }
+}

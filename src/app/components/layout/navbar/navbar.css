@@ -1,0 +1,16 @@
+.bg-navy {
+  background-color: #001f3f; /* Navy blue */
+}
+
+.navbar-brand span {
+  color: white;
+}
+
+.nav-link {
+  color: white !important;
+  font-weight: 500;
+}
+
+.nav-link:hover {
+  color: #f1f1f1 !important;
+}
