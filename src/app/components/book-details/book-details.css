@@ -1,0 +1,14 @@
+.page-wrap {
+  min-height: calc(100vh - 120px);
+  background-color: #f5f5dc;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.details-card {
+  max-width: 800px;
+  border-radius: 16px;
+  background: #fff;
+}

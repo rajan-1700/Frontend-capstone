@@ -1,0 +1,44 @@
+
+
+.card img {
+  height: 200px;
+  object-fit: cover;
+}
+
+.text-navy { color: #001f3f; }
+.bg-navy { background-color: #001f3f !important; }
+.btn-navy { background-color: #001f3f; color: white; }
+.btn-navy:hover { background-color: #003366; }
+.btn-navy {
+  background-color: #001f4d;
+  color: #fff;
+}
+.btn-navy:hover {
+  background-color: #003366;
+}
+
+
+.page-wrap {
+  min-height: calc(100vh - 120px);
+  background-color: #f5f5dc; /* beige theme */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.search-card {
+  width: 100%;
+  max-width: 1000px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+.hover-card {
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.hover-card:hover {
+  transform: scale(1.03);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}

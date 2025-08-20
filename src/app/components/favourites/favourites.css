@@ -1,0 +1,19 @@
+.page-wrap {
+  min-height: calc(100vh - 120px);
+  background-color: #f5f5dc; /* beige */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 40px 16px;
+}
+
+.fav-card {
+  width: 100%;
+  max-width: 720px;
+  border-radius: 16px;
+  background: #fff;
+}
+
+/* theme */
+.text-navy { color: #001f3f; }
+.btn-outline-danger { border-radius: 10px; }

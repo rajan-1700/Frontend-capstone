@@ -1,0 +1,12 @@
+<div class="page-wrap" *ngIf="!isLoading && book">
+  <div class="card shadow-lg details-card p-4">
+    <h2 class="text-navy fw-bold">{{ book.title }}</h2>
+    <p><strong>Description:</strong> {{ book.description?.value || book.description || 'No description available.' }}</p>
+    <p><strong>First Published:</strong> {{ book.first_publish_date || 'Unknown' }}</p>
+    <p><strong>Subjects:</strong> {{ book.subjects?.join(', ') || 'N/A' }}</p>
+  </div>
+</div>
+
+<div *ngIf="isLoading" class="text-center my-5">
+  <div class="spinner-border text-navy"></div>
+</div>

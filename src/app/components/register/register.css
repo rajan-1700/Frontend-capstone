@@ -1,3 +1,33 @@
-.card {
-  border: none;
+.register-container {
+  min-height: 100vh;
+  background-color: #f5f5dc; /* beige background */
+}
+
+.register-card {
+  width: 100%;
+  max-width: 450px;
+  border-radius: 15px;
+}
+
+/* Navy theme */
+.text-navy {
+  color: #001f3f;
+}
+
+.btn-navy {
+  background-color: #001f3f;
+  color: white;
+  transition: 0.3s;
+}
+.btn-navy:hover {
+  background-color: #003366;
+}
+
+/* Link styling */
+.link-navy {
+  color: #001f3f;
+  text-decoration: none;
+}
+.link-navy:hover {
+  text-decoration: underline;
 }

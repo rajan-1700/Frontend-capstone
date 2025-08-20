@@ -76,3 +76,10 @@ p {
   50%  { transform: translateY(-15px) rotate(var(--angle)); }
   100% { transform: translateY(0) rotate(var(--angle)); }
 }
+@media (max-width: 1200px) {
+  .book { width: 100px; }
+}
+
+@media (max-width: 992px) {
+  .book { display: none !important; }
+}

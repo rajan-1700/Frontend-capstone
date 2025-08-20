@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh; /* full viewport height */
+}
+
+app-root {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.main-content {
+  flex: 1; /* pushes footer down */
+}
+
+footer {
+  background-color: #001f3f; /* navy */
+  color: white;
+  padding: 1rem;
+  text-align: center;
+  margin-top: auto; /* stick footer at bottom */
+}
