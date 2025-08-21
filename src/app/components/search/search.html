@@ -32,15 +32,19 @@
     <h5>{{ bookData.title }}</h5>
 
     <!-- ✅ show multiple author names -->
-    <p><b>Author:</b> {{ bookData.authorNames ? bookData.authorNames.join(', ') : 'Unknown' }}</p>
+    <p><b>Author:</b> {{ bookData.authorNames?.length ? bookData.authorNames.join(', ') : 'Unknown' }}</p>
 
     <p><b>Publish Date:</b> {{ bookData.publish_date || 'N/A' }}</p>
 
-    <!-- ✅ show language code nicely -->
-    <p><b>Language:</b> {{ bookData.languages?.[0]?.key?.replace('/languages/', '') || 'N/A' }}</p>
+    <!-- ✅ show full language names -->
+    <p><b>Language:</b> {{ bookData.languageNames?.join(', ') || 'N/A' }}</p>
+
+    <!-- ✅ Add to Favourite button
+    <button (click)="addToFavourite()" class="btn btn-success mt-3">
+      ❤️ Add to Favourite
+    </button> -->
   </div>
 </div>
-
 
 
 

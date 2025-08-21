@@ -10,45 +10,65 @@ export class AuthorSearchService {
 
   private baseUrl = 'http://localhost:9001/api/authors/books';
   private openLibraryBaseUrl = 'https://openlibrary.org';
-
+   private languageMap: { [key: string]: string } = {
+    eng: 'English',
+    fre: 'French',
+    ger: 'German',
+    spa: 'Spanish',
+    ita: 'Italian',
+    rus: 'Russian',
+    hin: 'Hindi',
+    jpn: 'Japanese',
+    chi: 'Chinese',
+    ara: 'Arabic',
+    por: 'Portuguese',
+    dut: 'Dutch'
+  };
   constructor(private http: HttpClient) {}
 
-  getBookById(bookId: string, token: string): Observable<any> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+getBookById(bookId: string, token: string): Observable<any> {
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    // Step 1: Fetch book details from backend
-    return this.http.get<any>(`${this.baseUrl}/${bookId}`, { headers }).pipe(
-      switchMap(book => {
-        if (book?.authors?.length > 0) {
-          // Step 2: Fetch all authors in parallel
-          const authorRequests = book.authors.map((a: any) =>
-            this.http.get<any>(`${this.openLibraryBaseUrl}${a.key}.json`).pipe(
-              map(authorData => authorData?.name || 'Unknown Author'),
-              catchError(err => {
-                console.error('Error fetching author:', err);
-                return of('Unknown Author');
-              })
-            )
-          );
+  return this.http.get<any>(`${this.baseUrl}/${bookId}`, { headers }).pipe(
+    switchMap(book => {
+      const mappedLanguages = this.mapLanguages(book.languages);
 
-          return forkJoin(authorRequests).pipe(
-            map(authorNames => ({
-              ...book,
-              authorNames // array of names
-            }))
-          );
-        } else {
-          // No authors found
-          return of({
+      if (book?.authors?.length > 0) {
+        const authorRequests = book.authors.map((a: any) =>
+          this.http.get<any>(`${this.openLibraryBaseUrl}${a.key}.json`).pipe(
+            map(authorData => authorData?.name || 'Unknown Author'),
+            catchError(() => of('Unknown Author'))
+          )
+        );
+
+        return forkJoin(authorRequests).pipe(
+          map(authorNames => ({
             ...book,
-            authorNames: ['Unknown Author']
-          });
-        }
-      }),
-      catchError(error => {
-        console.error('Error fetching book:', error);
-        return throwError(() => error);
-      })
-    );
-  }
+            authorNames,
+            languageNames: mappedLanguages
+          }))
+        );
+      } else {
+        return of({
+          ...book,
+          authorNames: ['Unknown Author'],
+          languageNames: mappedLanguages
+        });
+      }
+    }),
+    catchError(error => {
+      console.error('Error fetching book:', error);
+      return throwError(() => error);
+    })
+  );
+}
+
+ private mapLanguages(languages: any[]): string[] {
+  if (!languages || languages.length === 0) return ['Unknown'];
+
+  return languages.map(l => {
+    const code = l.key?.replace('/languages/', '');
+    return this.languageMap[code] || code || 'Unknown';
+  });
+}
 }
