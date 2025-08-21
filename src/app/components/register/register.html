@@ -3,37 +3,93 @@
 
     <h2 class="text-center text-navy fw-bold mb-4">Register</h2>
 
-   <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)">
+    <form #registerForm="ngForm" (ngSubmit)="onRegister(registerForm)" novalidate>
 
-  <!-- User ID -->
-  <div class="mb-3">
-    <label for="uid" class="form-label">User ID</label>
-    <input type="number" id="uid" name="uid" [(ngModel)]="user.uid" required class="form-control">
-  </div>
+      <!-- User ID -->
+      <div class="mb-3">
+        <label for="uid" class="form-label">User ID</label>
+        <input
+          type="number"
+          id="uid"
+          name="uid"
+          [(ngModel)]="user.uid"
+          required
+          min="1"
+          #uid="ngModel"
+          class="form-control">
+        <div class="text-danger mt-1" *ngIf="uid.invalid && uid.touched">
+          <small *ngIf="uid.errors?.['required']">User ID is required.</small>
+          <small *ngIf="uid.errors?.['min']">User ID must be positive.</small>
+        </div>
+      </div>
 
-  <!-- Email -->
-  <div class="mb-3">
-    <label for="email" class="form-label">Email</label>
-    <input type="email" id="email" name="email" [(ngModel)]="user.email" required class="form-control">
-  </div>
+      <!-- Email -->
+      <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input
+          type="email"
+          id="email"
+          name="email"
+          [(ngModel)]="user.email"
+          required
+          email
+          #email="ngModel"
+          class="form-control">
+        <div class="text-danger mt-1" *ngIf="email.invalid && email.touched">
+          <small *ngIf="email.errors?.['required']">Email is required.</small>
+          <small *ngIf="email.errors?.['email']">Enter a valid email address.</small>
+        </div>
+      </div>
 
-  <!-- Age -->
-  <div class="mb-3">
-    <label for="age" class="form-label">Age</label>
-    <input type="number" id="age" name="age" [(ngModel)]="user.age" required min="1" class="form-control">
-  </div>
+      <!-- Age -->
+      <div class="mb-3">
+        <label for="age" class="form-label">Age</label>
+        <input
+          type="number"
+          id="age"
+          name="age"
+          [(ngModel)]="user.age"
+          required
+          min="18"
+          max="100"
+          #age="ngModel"
+          class="form-control">
+        <div class="text-danger mt-1" *ngIf="age.invalid && age.touched">
+          <small *ngIf="age.errors?.['required']">Age is required.</small>
+          <small *ngIf="age.errors?.['min']">You must be at least 18 years old.</small>
+          <small *ngIf="age.errors?.['max']">Age cannot exceed 100 years.</small>
+        </div>
+      </div>
 
-  <!-- Password -->
-  <div class="mb-3">
-    <label for="password" class="form-label">Password</label>
-    <input type="password" id="password" name="password" [(ngModel)]="user.password" required class="form-control">
-  </div>
+      <!-- Password -->
+      <div class="mb-3">
+        <label for="password" class="form-label">Password</label>
+        <input
+          type="password"
+          id="password"
+          name="password"
+          [(ngModel)]="user.password"
+          required
+          minlength="6"
+          pattern="^(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).+$"
+          #password="ngModel"
+          class="form-control">
+        <div class="text-danger mt-1" *ngIf="password.invalid && password.touched">
+          <small *ngIf="password.errors?.['required']">Password is required.</small>
+          <small *ngIf="password.errors?.['minlength']">Password must be at least 6 characters.</small>
+          <small *ngIf="password.errors?.['pattern']">
+            Password must contain at least 1 uppercase letter, 1 lowercase letter, and 1 number.
+          </small>
+        </div>
+      </div>
 
-  <div class="d-grid">
-    <button type="submit" class="btn btn-navy">Register</button>
-  </div>
-</form>
-
+      <!-- Submit -->
+      <div class="d-grid">
+        <button type="submit" class="btn btn-navy" [disabled]="registerForm.invalid">
+          Register
+        </button>
+      </div>
+    </form>
 
     <!-- Footer link -->
     <p class="text-center mt-3">

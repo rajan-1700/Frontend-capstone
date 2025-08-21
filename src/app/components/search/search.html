@@ -22,6 +22,22 @@
     </ul>
   </div>
 
+
+   <div class="mt-5">
+    <h4>Search Book by ID</h4>
+    <input #bookIdInput type="text" placeholder="Enter Book ID" class="form-control w-50 mb-3" />
+    <button (click)="searchBook(bookIdInput.value)" class="btn btn-navy">Search</button>
+
+    <div *ngIf="bookData" class="mt-4 card p-3 shadow">
+      <h5>{{ bookData.title }}</h5>
+      <p><b>Author:</b> {{ bookData.authors[0]?.name }}</p>
+      <p><b>Publish Date:</b> {{ bookData.publish_date }}</p>
+      <p><b>Language:</b> {{ bookData.languages?.[0]?.key }}</p>
+    </div>
+  </div>
+
+
+  
 <div class="container mt-4" *ngIf="popularBooks.length">
   <h4 class="mb-3">Trending Books</h4>
   <div class="row">

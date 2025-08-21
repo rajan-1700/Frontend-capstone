@@ -3,7 +3,7 @@
 
     <h2 class="text-center text-navy fw-bold mb-4">Login</h2>
 
-    <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)">
+    <form #loginForm="ngForm" (ngSubmit)="onLogin(loginForm)" novalidate>
 
       <!-- Email -->
       <div class="mb-3">
@@ -14,7 +14,15 @@
           name="email"
           [(ngModel)]="credentials.email"
           required
+          email
+          #email="ngModel"
           class="form-control">
+
+        <!-- Validation Errors -->
+        <div class="text-danger mt-1" *ngIf="email.invalid && email.touched">
+          <small *ngIf="email.errors?.['required']">Email is required.</small>
+          <small *ngIf="email.errors?.['email']">Enter a valid email address.</small>
+        </div>
       </div>
 
       <!-- Password -->
@@ -26,12 +34,24 @@
           name="password"
           [(ngModel)]="credentials.password"
           required
+          minlength="6"
+          #password="ngModel"
           class="form-control">
+
+        <!-- Validation Errors -->
+        <div class="text-danger mt-1" *ngIf="password.invalid && password.touched">
+          <small *ngIf="password.errors?.['required']">Password is required.</small>
+          <small *ngIf="password.errors?.['minlength']">
+            Password must be at least 6 characters long.
+          </small>
+        </div>
       </div>
 
       <!-- Submit -->
       <div class="d-grid">
-        <button type="submit" class="btn btn-navy">Login</button>
+        <button type="submit" class="btn btn-navy" [disabled]="loginForm.invalid">
+          Login
+        </button>
       </div>
 
     </form>
