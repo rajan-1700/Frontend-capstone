@@ -186,26 +186,29 @@
   <h4>Search Book by ID</h4>
   <input #bookIdInput type="text" placeholder="Enter Book ID" class="form-control w-50 mb-3" />
   <button (click)="searchBook(bookIdInput.value)" class="btn btn-search">
-  🔍 Search
-</button>
+    🔍 Search
+  </button>
 
   <div *ngIf="bookData" class="mt-4 card p-3 shadow">
     <h5>{{ bookData.title }}</h5>
 
+    <p><b>Book ID:</b> {{ bookData.id }}</p>
+    <p><b>Author:</b> {{ bookData.authorName || 'Unknown' }}</p>
+    <p><b>Publish Date:</b> {{ bookData.publishDate || 'N/A' }}</p>
+    <p><b>Language:</b> {{ bookData.language || 'N/A' }}</p>
 
-    <p><b>Author:</b> {{ bookData.authorNames?.length ? bookData.authorNames.join(', ') : 'Unknown' }}</p>
-
-    <p><b>Publish Date:</b> {{ bookData.publish_date || 'N/A' }}</p>
-
-
-    <p><b>Language:</b> {{ bookData.languageNames?.join(', ') || 'N/A' }}</p>
-
-    Add to Favourite button
-   <button  class="btn btn-success mt-3">
-  ❤️ Add to Favourites
-</button>
+    <!-- Add to Favourite button -->
+    <button
+      (click)="addToFavourite(bookData)"
+      class="btn btn-success mt-3">
+      💖 Add to Favourites
+    </button>
   </div>
 </div>
+
+
+
+
 
 
 <!-- Trending Books -->
@@ -230,9 +233,9 @@
         <div class="card-body p-2 d-flex flex-column justify-content-between">
           <h6 class="card-title mb-1" [style.fontSize.px]="14" [style.fontFamily]="fallbackFonts[getFontIndex(book.title || 'a')]">{{ book.title }}</h6>
           <small class="text-muted">{{ book.authors?.[0]?.name }}</small>
-<button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" (click)="toggleFavourite(book)">
-  <i class="bi"
-     [ngClass]="isFavourite(book) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+<button class="btn btn-sm btn-outline-primary d-flex align-items-center gap-1" >
+  <!-- <i class="bi"
+     ? 'bi-heart-fill text-danger' : 'bi-heart'"></i> -->
   Add to Favourites
 </button>
         </div>
@@ -263,12 +266,12 @@
         </div>
         <div class="card-body p-2 d-flex flex-column justify-content-between">
           <h6 class="card-title mb-1" [style.fontSize.px]="14" [style.fontFamily]="fallbackFonts[getFontIndex(book.title || 'a')]">{{ book.title }}</h6>
-          <button
+          <!-- <button
             class="btn btn-sm btn-outline-primary mt-2 d-flex align-items-center justify-content-center gap-1"
-            (click)="toggleFavourite(book)">
-            <i class="bi" [ngClass]="isFavourite(book) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
+            (click)="toggleFavourite(book)"> -->
+            <!-- <i class="bi" [ngClass]="isFavourite(book) ? 'bi-heart-fill text-danger' : 'bi-heart'"></i>
             <span class="xsmall">Favourite</span>
-          </button>
+          </button> -->
         </div>
       </div>
     </div>

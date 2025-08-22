@@ -13,16 +13,14 @@ export class FavouriteComponent implements OnInit {
   favourites: FavouriteBook[] = [];
   isLoading = false;
 
-  // Example: list of favourite book IDs for the user
-  favouriteBookIds: string[] = []; // Replace with real IDs from backend
-
   constructor(private favService: FavouriteService) {}
 
   ngOnInit(): void {
-    this.loadFavourites();
+    //this.loadFavourites();
   }
 
- loadFavourites() {
+
+  loadFavourites() {
     const token = localStorage.getItem('token');
     if (!token) {
       console.error('No token found in localStorage');
@@ -30,7 +28,7 @@ export class FavouriteComponent implements OnInit {
     }
 
     const payload = this.parseJwt(token);
-    const userEmail = payload?.sub || payload?.email; // depends on your token structure
+    const userEmail = payload?.email; // depending on your token structure
     if (!userEmail) {
       console.error('User email not found in token');
       return;
@@ -38,7 +36,7 @@ export class FavouriteComponent implements OnInit {
 
     this.isLoading = true;
     this.favourites = [];
-
+    console.log('Fetching favourites for email:', userEmail); // 🔹 debug
     this.favService.getFavouritesByUser(userEmail).subscribe({
       next: (res: FavouriteBook[]) => {
         console.log('Fetched favourites:', res);
@@ -52,24 +50,18 @@ export class FavouriteComponent implements OnInit {
     });
   }
 
-  removeFavourite(id: number) {
-    if (!confirm('Remove this book from favourites?')) return;
-    this.favService.removeFavourite(id).subscribe({
-      next: () => {
-        this.favourites = this.favourites.filter(f => f.id !== id);
-      },
-      error: (err) => console.error('Error removing favourite:', err)
-    });
-  }
-
+ 
+  // -----------------------------
+  // HELPER: PARSE JWT
+  // -----------------------------
   private parseJwt(token: string) {
     try {
-      return JSON.parse(atob(token.split('.')[1]));
+      const base64Payload = token.split('.')[1];
+      const payload = atob(base64Payload);
+      return JSON.parse(payload);
     } catch (e) {
       console.error('Error parsing JWT token', e);
       return null;
     }
   }
-
-
 }

@@ -1,3 +1,4 @@
+// import { FavouriteBook } from '../../favourites.service';
 import {
   Component,
   OnInit,
@@ -7,11 +8,12 @@ import {
 } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { HttpClient } from '@angular/common/http';
+//import { HttpClient } from '@angular/common/http';
 import { Subject, Subscription, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, switchMap } from 'rxjs/operators';
 import { FavouriteService, FavouriteBook } from '../../favourites.service';
 import { AuthorSearchService } from '../../author-search';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 
 @Component({
   selector: 'app-search',
@@ -52,8 +54,8 @@ export class SearchComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     // Example: load user favourites at init
-    const favouriteBookIds: string[] = ['123', '456']; // replace with actual IDs from backend
-    this.loadFavourites(favouriteBookIds);
+    const favouriteBookIds: string[] = []; // replace with actual IDs from backend
+   // this.loadFavourites();
 
     // live author search
     this.subscription = this.searchSubject.pipe(
@@ -85,80 +87,90 @@ export class SearchComponent implements OnInit, OnDestroy {
         error: (err) => console.error('Error fetching popular books:', err)
       });
   }
-
+  searchedBookId: string = '';
   // -----------------------------
   // FAVOURITES
   // -----------------------------
-  loadFavourites(bookIds: string[]) {
-    this.favourites = [];
-    bookIds.forEach(bookId => {
-      this.favService.getFavourite(bookId).subscribe({
-        next: (res) => {
-          if (res) {
-  const favBook: FavouriteBook = {
-  id: bookId as any,
-  author_name: this.selectedAuthorName || 'Unknown Author',
-  language: (res as any).languages?.[0]?.key?.replace('/languages/', '') || 'N/A',
-  publish_date: res.publish_date || 'N/A',
-  title: res.title,
-};
-            this.favourites.push(favBook);
-          }
-        },
-        error: (err) => console.error(`Error loading favourite for bookId ${bookId}:`, err)
-      });
-    });
+loadFavourites() {
+  const token = localStorage.getItem('token');
+  if (!token) {
+    console.error('No token found in localStorage');
+    return;
   }
 
-  isFavourite(book: any): boolean {
-    return this.favourites.some(f => f.id === book.id);
+  const payload = this.parseJwt(token);
+  const userEmail = payload?.sub || payload?.email;
+  if (!userEmail) {
+    console.error('User email not found in token');
+    return;
   }
 
-toggleFavourite(book: any) {
-  console.log('Book object clicked for favourite:', book);
+  this.isLoading = true;
+  this.favourites = [];
 
-  // Step 1: Fetch editions to get a valid bookId
-  this.http.get<any>(`https://openlibrary.org${book.key}/editions.json`).subscribe({
-    next: (editions) => {
-      const editionKey = editions.entries?.[0]?.key?.split('/').pop();
-      if (!editionKey) {
-        alert('Cannot add this book to favourites: missing edition ID');
-        return;
-      }
-
-      // Step 2: Use editionKey as bookId for backend
-      const bookId = editionKey;
-
-      if (this.isFavourite({ id: bookId })) {
-        this.favService.removeFavourite(bookId as any).subscribe({
-          next: () => {
-            this.favourites = this.favourites.filter(f => f.id !== bookId);
-          },
-          error: (err) => alert('Error removing favourite: ' + err.message)
-        });
-      } else {
-        this.favService.addFavourite(bookId).subscribe({
-          next: (res: any) => {
-            const favBook: FavouriteBook = {
-              id: bookId as any,
-              author_name: this.selectedAuthorName || 'Unknown Author',
-              language: res.language || 'N/A',
-              publish_date: res.publish_date || 'N/A',
-              title: res.title,
-            };
-            this.favourites.push(favBook);
-          },
-          error: (err) => alert('Error adding favourite: ' + err.message)
-        });
-      }
+  this.favService.getFavouritesByUser(userEmail).subscribe({
+    next: (res: FavouriteBook[]) => {
+      this.favourites = res || [];
+      this.isLoading = false;
     },
     error: (err) => {
-      console.error('Error fetching editions:', err);
-      alert('Cannot add this book to favourites: cannot fetch edition ID');
+      console.error(`Error loading favourites for user ${userEmail}:`, err);
+      this.isLoading = false;
     }
   });
+}
 
+
+// Helper function to decode JWT
+private parseJwt(token: string) {
+  try {
+    const base64Payload = token.split('.')[1];
+    const payload = atob(base64Payload);
+    return JSON.parse(payload);
+  } catch (e) {
+    console.error('Error parsing JWT', e);
+    return null;
   }
+}
+
+addToFavourite(book: any) {
+  console.log('🔍 Complete book object:', book);
+
+  if (!book) {
+    alert('❌ No book data');
+    return;
+  }
+
+  const token = localStorage.getItem('token') || '';
+
+  // Use the data you already have in frontend
+  const payload = {
+    title: book.title || 'Unknown Title',
+    authorName: book.authorNames || book.authorName || 'Unknown',
+    language: book.languages || book.language || 'Unknown',
+    publishDate: book.publishDate || 'Unknown',
+    bookId: book.id || 'Unknown',
+    userEmail: '' // Backend will set this from token
+  };
+
+  console.log('🔍 Final payload:', payload);
+
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+
+  // Send complete data to backend
+  this.authorSearchService.addFavourite(payload, headers).subscribe({
+    next: (res) => {
+      console.log('✅ Success response:', res);
+      alert(`✅ "${payload.title}" added to favourites successfully!`);
+    },
+    error: (err) => {
+      console.error('❌ Error details:', err);
+      console.error('❌ Request URL:', err.url);
+      alert(`❌ Failed: ${err.status} - ${err.error?.message || 'Unknown error'}`);
+    }
+  });
+}
+
 
   // -----------------------------
   // UTIL
@@ -192,17 +204,30 @@ toggleFavourite(book: any) {
     this.searchSubject.next(this.query);
   }
 
-  searchBook(bookId: string) {
-    if (!bookId) return;
-    this.authorSearchService.getBookById(bookId, this.token).subscribe({
-      next: (data) => this.bookData = data,
-      error: (err) => {
-        console.error("Error fetching book data:", err);
-        alert("Book not found!");
-        this.bookData = null;
-      }
-    });
-  }
+// search.ts
+searchBook(bookId: string) {
+  if (!bookId) return;
+
+  this.authorSearchService.getBookById(bookId, this.token).subscribe({
+    next: (data) => {
+      // Backend already returns the correct fields
+      this.bookData = {
+        title: data.title,
+        authorName: data.authorName,
+        publishDate: data.publishDate,
+        language: data.language,
+        id: bookId  // save the bookId so you can use it for adding to favourites
+      };
+    },
+    error: (err) => {
+      console.error("Error fetching book data:", err);
+      alert("Book not found!");
+      this.bookData = null;
+    }
+  });
+}
+
+
 
   viewWorks(authorKey: string) {
     this.isLoading = true;

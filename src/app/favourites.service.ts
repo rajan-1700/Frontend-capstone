@@ -3,12 +3,14 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 export interface FavouriteBook {
-  id?: number;
+  id?: string;             // use string since book key like "/works/OL19970609W"
+  key?: string;            // optional fallback
   author_name: string;
   language: string;
   publish_date: string;
   title: string;
 }
+
 
 @Injectable({
   providedIn: 'root'
@@ -18,26 +20,28 @@ export class FavouriteService {
 
   constructor(private http: HttpClient) {}
 
-  private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('authToken') || '';
-    return new HttpHeaders({
-      'Authorization': `Bearer ${token}`
-    });
-  }
+private getHeaders(): HttpHeaders {
+  const token = localStorage.getItem('token') || '';
+  return new HttpHeaders({
+    'Authorization': `Bearer ${token}`
+  });
+}
+
 
   // ✅ Trigger favourite by GET with bookId
-  addFavourite(bookId: string): Observable<FavouriteBook> {
-    return this.http.get<FavouriteBook>(`${this.baseUrl}/${bookId}`, {
-      headers: this.getHeaders()
-    });
-  }
-
+addFavourite(bookId: string): Observable<FavouriteBook> {
+  return this.http.get<FavouriteBook>(`${this.baseUrl}/${bookId}`, {
+    headers: this.getHeaders()
+  });
+}
   // Fetch a favourite book detail dynamically by bookId
-  getFavourite(bookId: string): Observable<FavouriteBook> {
-    return this.http.get<FavouriteBook>(`${this.baseUrl}/${bookId}`, {
-      headers: this.getHeaders()
-    });
-  }
+  // Fetch all favourites for a given user email
+// getFavouritesByUser(userEmail: string): Observable<FavouriteBook[]> {
+//   return this.http.get<FavouriteBook[]>(`http://localhost:9001/api/favourites/ro@g.com`, {
+//     headers: this.getHeaders()
+//   });
+// }
+
 
   // Remove favourite by book ID
   removeFavourite(id: number): Observable<void> {
@@ -50,4 +54,5 @@ export class FavouriteService {
     headers: this.getHeaders()
   });
 }
+
 }

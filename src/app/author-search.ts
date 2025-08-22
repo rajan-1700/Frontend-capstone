@@ -8,9 +8,9 @@ import { catchError, switchMap, map } from 'rxjs/operators';
 })
 export class AuthorSearchService {
 
-//  private baseUrl = 'http://localhost:9001/api/authors/books';
+
   private baseUrl= 'http://localhost:9001/api/authors/booooks';
-  private favouriteUrl = 'http://localhost:9001/api/authors/books';  // ✅ declared properly
+  private favouriteUrl = 'http://localhost:9001/api/authors/favourite';  // ✅ declared properly
   private openLibraryBaseUrl = 'https://openlibrary.org';
 
   private languageMap: { [key: string]: string } = {
@@ -30,61 +30,36 @@ export class AuthorSearchService {
 
   constructor(private http: HttpClient) {}
 
-  getBookById(bookId: string, token: string): Observable<any> {
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
+getBookById(bookId: string, token: string): Observable<any> {
+  const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
 
-    return this.http.get<any>(`${this.baseUrl}/${bookId}`, { headers }).pipe(
-      switchMap(book => {
-        const mappedLanguages = this.mapLanguages(book.languages);
+  return this.http.get<any>(`${this.baseUrl}/${bookId}`, { headers }).pipe(
+    map(book => ({
+      id: bookId,
+      title: book.title,
+      authorName: book.authorName || 'Unknown',
+      publishDate: book.publishDate || 'N/A',
+      language: book.language || 'N/A'
+    })),
+    catchError(error => {
+      console.error('Error fetching book:', error);
+      return throwError(() => error);
+    })
+  );
+}
 
-        if (book?.authors?.length > 0) {
-          const authorRequests = book.authors.map((a: any) =>
-            this.http.get<any>(`${this.openLibraryBaseUrl}${a.key}.json`).pipe(
-              map(authorData => authorData?.name || 'Unknown Author'),
-              catchError(() => of('Unknown Author'))
-            )
-          );
-
-          return forkJoin(authorRequests).pipe(
-            map(authorNames => ({
-              ...book,
-              authorNames,
-              languageNames: mappedLanguages
-            }))
-          );
-        } else {
-          return of({
-            ...book,
-            authorNames: ['Unknown Author'],
-            languageNames: mappedLanguages
-          });
-        }
-      }),
-      catchError(error => {
-        console.error('Error fetching book:', error);
-        return throwError(() => error);
-      })
-    );
-  }
 
 //  ✅ Save a book to favourites
-  addToFavourite(book: any, userEmail: string): Observable<any> {
-    const payload = {
-      authorName: book.authorNames?.[0] || 'Unknown Author',
-      publishDate: book.publish_date || 'N/A',
-      userEmail: userEmail,
-      title: book.title || 'Untitled',
-      language: book.languageNames?.[0] || 'Unknown'
-    };
-
-    return this.http.post(this.favouriteUrl, payload).pipe(
-      catchError(error => {
-        console.error('Error saving favourite:', error);
-        return throwError(() => error);
-      })
-    );
-  }
-
+// Remove the addFavourite method and replace with:
+// In author-search.ts
+// Revert back to original method
+addFavourite(book: any, headers?: HttpHeaders): Observable<any> {
+  // Use baseUrl + /favourite instead of favouriteUrl
+  const fullUrl = `${this.favouriteUrl}`;
+  console.log('🔍 Base URL:', this.favouriteUrl);
+  console.log('🔍 Full URL:', fullUrl);
+  return this.http.post<any>(fullUrl, book, { headers });
+}
   private mapLanguages(languages: any[]): string[] {
     if (!languages || languages.length === 0) return ['Unknown'];
 
@@ -94,3 +69,4 @@ export class AuthorSearchService {
     });
   }
 }
+

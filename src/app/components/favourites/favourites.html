@@ -1,10 +1,15 @@
-<div *ngIf="!isLoading && favourites.length" class="favourites-grid">
+<div *ngIf="isLoading">Loading favourites...</div>
+
+<div class="favourites-grid">
   <div *ngFor="let book of favourites" class="book-card">
     <h3>{{ book.title }}</h3>
     <p>Author: {{ book.author_name }}</p>
     <p>Language: {{ book.language }}</p>
     <p>Published: {{ book.publish_date }}</p>
-    <button (click)="removeFavourite(book.id!)">Remove</button>
+    <button>Remove</button>
   </div>
 </div>
 
+<div *ngIf="!isLoading && favourites.length === 0">
+  No favourite books found.
+</div>

@@ -14,6 +14,19 @@
   background: #fff;
 }
 
+.favourites-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.book-card {
+  padding: 12px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background: #f9f9f9;
+}
+
 /* theme */
 .text-navy { color: #001f3f; }
 .btn-outline-danger { border-radius: 10px; }
