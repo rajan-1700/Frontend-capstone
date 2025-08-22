@@ -3,7 +3,7 @@ import { HomeComponent } from './components/home/home';
 import { LoginComponent } from './components/login/login';
 import { RegisterComponent } from './components/register/register';
 import { SearchComponent } from './components/search/search';
-import { FavouritesComponent } from './components/favourites/favourites';
+import { FavouriteComponent } from './components/favourites/favourites';
 import { AuthGuard } from './auth-guard';
 import { BookDetailsComponent } from './components/book-details/book-details';
 
@@ -18,7 +18,7 @@ export const routes: Routes = [
 
   // Protected routes (require login)
   { path: 'search', component: SearchComponent, canActivate: [AuthGuard] },
-  { path: 'favourites', component: FavouritesComponent, canActivate: [AuthGuard] },
+  { path: 'favourites', component: FavouriteComponent, canActivate: [AuthGuard] },
 
   // Dynamic route for book details
   { path: 'book/:olid', component: BookDetailsComponent },

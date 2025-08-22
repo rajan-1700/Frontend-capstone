@@ -8,8 +8,9 @@ import { catchError, switchMap, map } from 'rxjs/operators';
 })
 export class AuthorSearchService {
 
-  private baseUrl = 'http://localhost:9001/api/authors/books';
-  private favouritesUrl = 'http://localhost:9001/api/favourites';  // ✅ declared properly
+//  private baseUrl = 'http://localhost:9001/api/authors/books';
+  private baseUrl= 'http://localhost:9001/api/authors/booooks';
+  private favouriteUrl = 'http://localhost:9001/api/authors/books';  // ✅ declared properly
   private openLibraryBaseUrl = 'https://openlibrary.org';
 
   private languageMap: { [key: string]: string } = {
@@ -66,7 +67,7 @@ export class AuthorSearchService {
     );
   }
 
-  // ✅ Save a book to favourites
+//  ✅ Save a book to favourites
   addToFavourite(book: any, userEmail: string): Observable<any> {
     const payload = {
       authorName: book.authorNames?.[0] || 'Unknown Author',
@@ -76,7 +77,7 @@ export class AuthorSearchService {
       language: book.languageNames?.[0] || 'Unknown'
     };
 
-    return this.http.post(this.favouritesUrl, payload).pipe(
+    return this.http.post(this.favouriteUrl, payload).pipe(
       catchError(error => {
         console.error('Error saving favourite:', error);
         return throwError(() => error);

@@ -1,52 +1,53 @@
-// src/app/components/favourites/favourites.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+export interface FavouriteBook {
+  id?: number;
+  author_name: string;
+  language: string;
+  publish_date: string;
+  title: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
-export class FavouritesService {
-  private favourites: any[] = [];
-  private apiUrl = 'http://localhost:9001/api/favourites'; // ✅ backend endpoint
+export class FavouriteService {
+  private baseUrl = 'http://localhost:9001/api/authors/books';
 
   constructor(private http: HttpClient) {}
 
-  // --------------------
-  // 🔹 Local (UI only)
-  // --------------------
-  getFavourites() {
-    return this.favourites;
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('authToken') || '';
+    return new HttpHeaders({
+      'Authorization': `Bearer ${token}`
+    });
   }
 
-  addFavourite(book: any) {
-    if (!this.favourites.find(b => b.title === book.title)) {
-      this.favourites.push(book);
-    }
+  // ✅ Trigger favourite by GET with bookId
+  addFavourite(bookId: string): Observable<FavouriteBook> {
+    return this.http.get<FavouriteBook>(`${this.baseUrl}/${bookId}`, {
+      headers: this.getHeaders()
+    });
   }
 
-  removeFavourite(bookTitle: string) {
-    this.favourites = this.favourites.filter(b => b.title !== bookTitle);
+  // Fetch a favourite book detail dynamically by bookId
+  getFavourite(bookId: string): Observable<FavouriteBook> {
+    return this.http.get<FavouriteBook>(`${this.baseUrl}/${bookId}`, {
+      headers: this.getHeaders()
+    });
   }
 
-  // --------------------
-  // 🔹 Backend (API calls)
-  // --------------------
-  getFavouritesFromBackend(userEmail: string): Observable<any[]> {
-    const token = localStorage.getItem('token') || '';
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.get<any[]>(`${this.apiUrl}/${userEmail}`, { headers });
+  // Remove favourite by book ID
+  removeFavourite(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/${id}`, {
+      headers: this.getHeaders()
+    });
   }
-
-  saveFavouriteToBackend(book: any): Observable<any> {
-    const token = localStorage.getItem('token') || '';
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.post<any>(this.apiUrl, book, { headers });
-  }
-
-  deleteFavouriteFromBackend(bookTitle: string, userEmail: string): Observable<any> {
-    const token = localStorage.getItem('token') || '';
-    const headers = new HttpHeaders().set('Authorization', `Bearer ${token}`);
-    return this.http.delete<any>(`${this.apiUrl}/${userEmail}/${bookTitle}`, { headers });
-  }
+  getFavouritesByUser(email: string) {
+  return this.http.get<FavouriteBook[]>(`http://localhost:9001/api/favourites/${email}`, {
+    headers: this.getHeaders()
+  });
+}
 }

@@ -1,18 +1,10 @@
-<div class="container mt-4">
-  <h3>My Favourites</h3>
-  <div class="row g-3" *ngIf="favourites.length; else noFavs">
-    <div class="col-6 col-md-4" *ngFor="let book of favourites">
-      <div class="card h-100 shadow-sm">
-        <img [src]="book.cover || 'assets/default-book.png'" class="card-img-top" alt="Book Cover">
-        <div class="card-body">
-          <h6 class="card-title">{{ book.title }}</h6>
-          <button class="btn btn-sm btn-danger mt-2" (click)="remove(book.key)">Remove</button>
-        </div>
-      </div>
-    </div>
+<div *ngIf="!isLoading && favourites.length" class="favourites-grid">
+  <div *ngFor="let book of favourites" class="book-card">
+    <h3>{{ book.title }}</h3>
+    <p>Author: {{ book.author_name }}</p>
+    <p>Language: {{ book.language }}</p>
+    <p>Published: {{ book.publish_date }}</p>
+    <button (click)="removeFavourite(book.id!)">Remove</button>
   </div>
-
-  <ng-template #noFavs>
-    <p>No favourites added yet.</p>
-  </ng-template>
 </div>
+
